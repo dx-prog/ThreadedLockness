@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadedLockness", "Dev\ThreadedLockness.csproj", "{6CCFD184-2FE5-48D2-81F7-6B50FBDB0C79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadedLockness.Test", "Test\ThreadedLockness.Test\ThreadedLockness.Test.csproj", "{58A18A9E-7D4C-41A3-BF26-30E86C6DEC3E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CCFD184-2FE5-48D2-81F7-6B50FBDB0C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CCFD184-2FE5-48D2-81F7-6B50FBDB0C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CCFD184-2FE5-48D2-81F7-6B50FBDB0C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CCFD184-2FE5-48D2-81F7-6B50FBDB0C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A18A9E-7D4C-41A3-BF26-30E86C6DEC3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A18A9E-7D4C-41A3-BF26-30E86C6DEC3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A18A9E-7D4C-41A3-BF26-30E86C6DEC3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A18A9E-7D4C-41A3-BF26-30E86C6DEC3E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1136146E-B616-427D-8DE5-03EEB9E8C359}
+	EndGlobalSection
+EndGlobal
