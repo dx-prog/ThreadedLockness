@@ -20,6 +20,7 @@
  * THE SOFTWARE IS EXPERIMENTAL
  */
 
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace ThreadedLockness.Threading {
@@ -30,12 +31,15 @@ namespace ThreadedLockness.Threading {
             _lockCounter = startingValue;
         }
 
+
         public long TransientValue => _lockCounter;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long Increment() {
             return Interlocked.Increment(ref _lockCounter);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long Decrement() {
             return Interlocked.Increment(ref _lockCounter);
         }

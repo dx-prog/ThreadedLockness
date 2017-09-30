@@ -23,20 +23,23 @@
 namespace ThreadedLockness.Collections {
     public enum LinkListVisitorStatus {
         /// <summary>
-        /// Continue visiting
+        ///     Continue visiting
         /// </summary>
         Continue,
+
         /// <summary>
-        /// The visitor vinished
+        ///     The visitor vinished
         /// </summary>
         Success,
+
         /// <summary>
-        /// Any type of failure
+        ///     Any type of failure
         /// </summary>
         Failure,
+
         /// <summary>
-        /// The visitor went through all nodes
-        /// but success was not achieved
+        ///     The visitor went through all nodes
+        ///     but success was not achieved
         /// </summary>
         CompletedWithoutSuccess
     }

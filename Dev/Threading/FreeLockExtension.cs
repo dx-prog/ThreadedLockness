@@ -21,7 +21,6 @@
  */
 
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
 
 namespace ThreadedLockness.Threading {
     public static class FreeLockExtension {

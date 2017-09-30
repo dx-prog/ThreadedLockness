@@ -25,6 +25,6 @@ namespace ThreadedLockness.Collections {
         Unknown = -1,
         BadInput,
         LockFailed,
-        Success,
+        Success
     }
 }

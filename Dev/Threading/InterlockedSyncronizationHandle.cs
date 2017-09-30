@@ -63,7 +63,7 @@ namespace ThreadedLockness.Threading {
                     Interlocked.Increment(ref _lockCount);
                     ret = true;
                 }
-                if(ret)
+                if (ret)
                     Thread.BeginCriticalRegion();
             }
             return ret;

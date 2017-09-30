@@ -64,6 +64,54 @@ namespace ThreadedLockness.Collections {
             return $"First={First},Last={Last}";
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        public bool TryRemove(ThreadSafeLinkListNode position,
+            int spintCount = 100) {
+            if (null == position)
+                return false;
+
+            var success = false;
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try {
+            }
+            finally {
+                using (var t = LockSystem.TryGetLock()) {
+                    // ReSharper disable once AssignmentInConditionalExpression
+                    if (success = t.Initialize(spintCount)) {
+                        var beforePosition = position.Previous;
+                        var afterPosition = position.Next;
+
+
+                        if (beforePosition != null && afterPosition != null) {
+                            beforePosition.Next = afterPosition;
+                            afterPosition.Previous = beforePosition;
+                        }
+                        else {
+                            // we are at the front
+                            if (beforePosition == null) {
+                                First = afterPosition;
+                                if (afterPosition != null)
+                                    afterPosition.Previous = null;
+                            }
+                            // we are at the back
+                            if (afterPosition == null) {
+                                Last = beforePosition;
+                                if (beforePosition != null)
+                                    beforePosition.Next = null;
+                            }
+                        }
+
+
+                        _counter.Decrement();
+                    }
+                }
+            }
+
+            return success;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         public bool TryAddBefore(ThreadSafeLinkListNode start,
@@ -155,33 +203,10 @@ namespace ThreadedLockness.Collections {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        public bool RemoveFirst(int spinCount, out ThreadSafeLinkListNode outFirst) {
-            var success = false;
-            RuntimeHelpers.PrepareConstrainedRegions();
-            try {
-                outFirst = null;
-            }
-            finally {
-                using (var t = LockSystem.TryGetLock()) {
-                    // ReSharper disable once AssignmentInConditionalExpression
-                    if (success = t.Initialize(spinCount)) {
-                        outFirst = First;
-                        if (First == Last) {
-                            First = Last = null;
-                        }
-                        else {
-                            var oldFirst = First;
-                            First = oldFirst.Next;
-                            if (First == null)
-                                Last = null;
-                        }
-                        outFirst.Next = outFirst.Previous = null;
-                        _counter.Decrement();
-                    }
-                }
-            }
-
-            return success;
+        public bool TryRemoveFirst(int spinCount) {
+            RuntimeHelpers.ProbeForSufficientStack();
+            ;
+            return TryRemove(First, spinCount);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -276,32 +301,10 @@ namespace ThreadedLockness.Collections {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        public bool RemoveLast(int spinCount, out ThreadSafeLinkListNode outLast) {
-            bool success;
-            RuntimeHelpers.PrepareConstrainedRegions();
-            try {
-                outLast = null;
-            }
-            finally {
-                using (var t = LockSystem.TryGetLock()) {
-                    // ReSharper disable once AssignmentInConditionalExpression
-                    if (success = t.Initialize(spinCount)) {
-                        outLast = Last;
-                        if (First == Last) {
-                            First = Last = null;
-                        }
-                        else {
-                            Last = Last.Previous;
-                            Last.Next = null;
-                            outLast.Next = outLast.Previous = null;
-                        }
-
-                        _counter.Decrement();
-                    }
-                }
-            }
-
-            return success;
+        public bool TryRemoveLast(int spinCount) {
+            RuntimeHelpers.ProbeForSufficientStack();
+            ;
+            return TryRemove(Last, spinCount);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -393,6 +396,10 @@ namespace ThreadedLockness.Collections {
             public TValue Value { get; set; }
             public ThreadSafeLinkListNode Next { get; internal set; }
             public ThreadSafeLinkListNode Previous { get; internal set; }
+
+            public bool TryRemove() {
+                return Owner.TryRemove(this);
+            }
 
             public override int GetHashCode() {
                 return (Owner.GetHashCode() << 7) ^ RuntimeHelpers.GetHashCode(this);

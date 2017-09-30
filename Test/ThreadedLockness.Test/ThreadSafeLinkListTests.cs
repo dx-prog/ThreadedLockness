@@ -19,6 +19,7 @@
  * WARNING:
  * THE SOFTWARE IS EXPERIMENTAL
  */
+
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,6 +28,78 @@ using ThreadedLockness.Collections;
 namespace ThreadedLockness.Test {
     [TestClass]
     public class ThreadSafeLinkListTests : LocknessTestbase {
+        [TestMethod]
+        public void ThreadSafeLinkList_RemoveTowardsLast() {
+            var list = new ThreadSafeLinkedList<int>();
+
+            TestAddLast(list, 10);
+            TestAddLast(list, 11);
+            TestAddLast(list, 12);
+            TestAddLast(list, 13);
+            TestAddLast(list, 14);
+
+            var middle = list.TryGetAt(2 /*zero base*/);
+            Assert.AreEqual(12, middle.Value);
+            Assert.IsTrue(list.TryRemove(middle));
+
+
+            middle = list.TryGetAt(2 /*zero base*/);
+            Assert.AreEqual(13, middle.Value);
+            Assert.IsTrue(list.TryRemove(middle));
+
+
+            middle = list.TryGetAt(2 /*zero base*/);
+            Assert.AreEqual(14, middle.Value);
+            Assert.IsTrue(list.TryRemove(middle));
+
+            Assert.AreEqual(list.Last, list.TryGetAt(1));
+        }
+
+
+        [TestMethod]
+        public void ThreadSafeLinkList_FromFront() {
+            var list = new ThreadSafeLinkedList<int>();
+
+            TestAddLast(list, 10);
+            TestAddLast(list, 11);
+            TestAddLast(list, 12);
+            TestAddLast(list, 13);
+            TestAddLast(list, 14);
+
+            var first = list.TryGetAt(0);
+            Assert.AreEqual(10, first.Value);
+            Assert.AreEqual(list.First, first);
+            Assert.AreNotEqual(list.Last, first);
+            Assert.IsTrue(list.TryRemove(first));
+
+            first = list.TryGetAt(0);
+            Assert.AreEqual(11, first.Value);
+            Assert.AreEqual(list.First, first);
+            Assert.AreNotEqual(list.Last, first);
+            Assert.IsTrue(list.TryRemove(first));
+
+            first = list.TryGetAt(0);
+            Assert.AreEqual(12, first.Value);
+            Assert.AreEqual(list.First, first);
+            Assert.AreNotEqual(list.Last, first);
+            Assert.IsTrue(list.TryRemove(first));
+
+            first = list.TryGetAt(0);
+            Assert.AreEqual(13, first.Value);
+            Assert.AreEqual(list.First, first);
+            Assert.AreNotEqual(list.Last, first);
+            Assert.IsTrue(list.TryRemove(first));
+
+            first = list.TryGetAt(0);
+            Assert.AreEqual(14, first.Value);
+            Assert.AreEqual(list.First, first);
+            Assert.AreEqual(list.Last, first);
+            Assert.IsTrue(list.TryRemove(first));
+
+            Assert.IsNull(list.First);
+            Assert.IsNull(list.Last);
+        }
+
         [TestMethod]
         public void ThreadSafeLinkList_AddLast() {
             var list = new ThreadSafeLinkedList<int>();
@@ -74,24 +147,23 @@ namespace ThreadedLockness.Test {
             }
 
             Assert.AreEqual(100, list.Count);
-            Assert.AreEqual(100, list.Select(x=>x.Value).Distinct().Count());
+            Assert.AreEqual(100, list.Select(x => x.Value).Distinct().Count());
         }
 
         [TestMethod]
-        public void ThreadSafeLinkList_AddBefore_Random()
-        {
+        public void ThreadSafeLinkList_AddBefore_Random() {
             var list = new ThreadSafeLinkedList<int>();
 
-            var random = new Random((int)DateTime.Now.Ticks);
-            for (var i = 0; i < 100; i++)
-            {
-                var pos = random.Next(-1, (int)list.Count);
+            var random = new Random((int) DateTime.Now.Ticks);
+            for (var i = 0; i < 100; i++) {
+                var pos = random.Next(-1, (int) list.Count);
                 TestAddBefore(list, list.TryGetAt(pos), i);
             }
 
             Assert.AreEqual(100, list.Count);
             Assert.AreEqual(100, list.Select(x => x.Value).Distinct().Count());
         }
+
         private static void TestAddLast(ThreadSafeLinkedList<int> list, int v) {
             list.TryAddLast(v, out var n);
             Assert.AreEqual(v, list.Last.Value);
